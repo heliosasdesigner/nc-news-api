@@ -71,7 +71,7 @@ const insertUSersData = async (userData) => {
 };
 
 const insertArticlesData = async (articleData) => {
-  console.log(articleData, "<<<<");
+  //console.log(articleData, "<<<<");
   const formattedValue = articleData.map(
     ({ title, topic, author, body, created_at, article_img_url }) => [
       title,
@@ -82,11 +82,11 @@ const insertArticlesData = async (articleData) => {
       article_img_url,
     ]
   );
-  console.log(formattedValue, "<<<< formattedString");
+  //console.log(formattedValue, "<<<< formattedString");
   const authorsList = articleData.map(({ author }) => author);
-  console.log(authorsList, " <<<< authorlist");
+  //console.log(authorsList, " <<<< authorlist");
   const topicsList = articleData.map(({ topic }) => topic);
-  console.log(topicsList, " <<<< topiclist");
+  //console.log(topicsList, " <<<< topiclist");
   const sqlQuery = format(
     // `WITH all_authors AS (SELECT * from authors)), all_topics AS (SELECT * FROM topics)
     // INSERT INTO articles (title, topic, author, body, created_at, article_img_url)

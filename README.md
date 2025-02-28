@@ -50,13 +50,11 @@ To connect to your PostgreSQL database locally, you need to create a .env file i
 
     In the `.env.developement`:
     ```sh
-        PGDATABASE = <your_database_name>
-        
+    PGDATABASE = <your_database_name>
     ```
     In the `.env.test`:
     ```sh
-        PGDATABASE = <your_database_name>.test
-        
+    PGDATABASE = <your_database_name>.test
     ```
 
 ## Database Setup
@@ -80,9 +78,9 @@ To start the application:
 ```sh
 npm start
 ```
-For development mode with live reloading:
+For development mode with live reloading (working on it):
 ```sh
-npm run dev
+npm run dev 
 ```
 To run tests:
 ```sh
