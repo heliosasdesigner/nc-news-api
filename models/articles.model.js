@@ -20,9 +20,6 @@ exports.fetchAllArticles = () => {
   queryString += `ORDER BY a.${order}`;
 
   return db.query(queryString).then(({ rows }) => {
-    if (!rows.length) {
-      return Promise.reject({ status: 404, msg: "No article Found" });
-    }
     return rows;
   });
 };

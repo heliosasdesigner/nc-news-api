@@ -10,6 +10,7 @@ const {
 } = require("./controllers/articles.controller");
 const {
   getAllCommentsByArticleId,
+  postCommentByArticleId,
 } = require("./controllers/comments.controller");
 
 app.use(express.json());
@@ -21,6 +22,8 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.all("*", notFound);
 

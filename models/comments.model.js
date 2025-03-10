@@ -8,9 +8,24 @@ exports.fetchAllCommentsByArticleId = (article_id) => {
   queryString += `ORDER BY ${order} DESC`;
 
   return db.query(queryString, queryValue).then(({ rows }) => {
-    if (!rows.length) {
-      return Promise.reject({ status: 404, msg: "No comment Found" });
-    }
     return rows;
   });
+};
+
+exports.insertCommentByArticleId = (article_id, content) => {
+  const { username, body } = content;
+  let createDate = new Date();
+  let queryString = `
+    INSERT INTO comments (article_id, body, votes, author, created_at)
+    VALUES ($1, $2, 0, $3, $4)
+    RETURNING *;`;
+  const queryValue = [article_id, body, username, createDate];
+  return db
+    .query(queryString, queryValue)
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .catch((err) => {
+      throw err;
+    });
 };
