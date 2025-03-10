@@ -23,3 +23,17 @@ exports.fetchAllArticles = () => {
     return rows;
   });
 };
+
+exports.updateArticleVotesById = (article_id, inc_votes) => {
+  queryString = `UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`;
+  queryValue = [inc_votes, article_id];
+  return db
+    .query(queryString, queryValue)
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
+};
