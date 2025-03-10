@@ -66,13 +66,14 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("200: Responds with an object of all articles sorted by created_at", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toBeSortedBy("created_at", { descending: false });
+
         articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.title).toBe("string");
@@ -160,6 +161,46 @@ describe("GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("No article Found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an object of all articles sorted by created_at", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+
+        comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.article_id).toBe("number");
+        });
+      });
+  });
+
+  test("404: Responds with an error", () => {
+    return request(app)
+      .get("/api/articles/4/comment")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Page Not Found");
+      });
+  });
+
+  test("404: Responds with an error of no topics found", () => {
+    db.query("DELETE FROM comments;");
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No comment Found");
       });
   });
 });

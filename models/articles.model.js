@@ -23,7 +23,6 @@ exports.fetchAllArticles = () => {
     if (!rows.length) {
       return Promise.reject({ status: 404, msg: "No article Found" });
     }
-    console.log(rows);
     return rows;
   });
 };
