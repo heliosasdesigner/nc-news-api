@@ -32,9 +32,9 @@ Ensure you have the following installed on your system:
 
 2. Install dependencies:
 
-```sh
-    npm install
-  ```
+   ```sh
+   npm install
+   ```
 
 ## Setting Up Environment Variables
 
