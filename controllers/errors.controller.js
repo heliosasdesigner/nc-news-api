@@ -1,6 +1,5 @@
 exports.psqlError = (err, req, res, next) => {
   if (err.code === "22P02") {
-    console.log(err, "<<<<< error");
     res.status(400).send({ msg: "Database request failed" });
   }
   next(err);
