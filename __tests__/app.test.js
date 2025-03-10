@@ -197,18 +197,13 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test("201: Responds with an object of new comment", () => {
+  test("201: Responds with the posted comment of new comment", () => {
     return request(app)
       .post("/api/articles/4/comments")
       .send({ username: "butter_bridge", body: "I love streaming noses" })
       .expect(201)
       .then(({ body: { comment } }) => {
-        expect(comment.article_id).toBe(4);
-        expect(comment.author).toBe("butter_bridge");
-        expect(comment.comment_id).toBe(19);
-        expect(comment.votes).toBe(0);
-        expect(comment.body).toBe("I love streaming noses");
-        expect(typeof comment.created_at).toBe("string");
+        expect(comment).toBe("I love streaming noses");
       });
   });
 
@@ -232,13 +227,66 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(msg).toBe("Page Not Found");
       });
   });
+});
 
-  // test("404: Responds with an error which article id no exist", () => {
-  //   return request(app)
-  //     .get("/api/articles/999/comments")
-  //     .expect(404)
-  //     .then(({ body: { msg } }) => {
-  //       expect(msg).toBe("No article Found");
-  //     });
-  // });
+describe("PATCH /api/articles/:article_id", () => {
+  test("202: Responds with an vote(+100) updated object of article by id", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: 100 })
+      .expect(202)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          article_id: 3,
+          title: "They're not exactly dogs, are they?",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "Well? Think about it.",
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("202: Responds with an vote(-1000) updated object of article by id", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: -1000 })
+      .expect(202)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          article_id: 3,
+          title: "They're not exactly dogs, are they?",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "Well? Think about it.",
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: -1000,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("400: Passed invalid value and Responds with an error of bad request ", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: "ABCD" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+
+  test("404: Responds with an error which id no exist", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No article Found");
+      });
+  });
 });
