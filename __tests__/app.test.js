@@ -66,7 +66,47 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe.only("GET /api/articles/:article_id", () => {
+describe.only("GET /api/articles", () => {
+  test("200: Responds with an object of all articles sorted by created_at", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+        articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+
+  test("404: Responds with an error", () => {
+    return request(app)
+      .get("/api/article")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Page Not Found");
+      });
+  });
+
+  test("404: Responds with an error of no topics found", () => {
+    db.query("DELETE FROM articles;");
+    return request(app)
+      .get("/api/articles")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No article Found");
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an object of article by id", () => {
     return request(app)
       .get("/api/articles/3")
