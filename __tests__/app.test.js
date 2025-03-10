@@ -5,6 +5,12 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const {
+  createTopicsTable,
+  createUsersTable,
+  createArticlesTable,
+  createCommentsTable,
+} = require("../db/seeds/seeding-func");
 /* Set up your beforeEach & afterAll functions here */
 
 beforeEach(() => {
@@ -26,13 +32,12 @@ describe("GET /api", () => {
   });
 });
 
-describe.only("GET /api/topics", () => {
+describe("GET /api/topics", () => {
   test("200: Responds with an object of all topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        //console.log(topics);
         topics.forEach((topic) => {
           expect(typeof topic.description).toBe("string");
           expect(typeof topic.slug).toBe("string");
@@ -47,6 +52,74 @@ describe.only("GET /api/topics", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Page Not Found");
+      });
+  });
+
+  test("404: Responds with an error of no topics found", () => {
+    db.query("DELETE FROM topics;");
+    return request(app)
+      .get("/api/topics")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No Topics Found");
+      });
+  });
+});
+
+describe.only("GET /api/articles/:article_id", () => {
+  test("200: Responds with an object of article by id", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          article_id: 3,
+          title: "They're not exactly dogs, are they?",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "Well? Think about it.",
+          created_at: "2020-06-06T09:10:00.000Z",
+          votes: 0,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+
+  test("400: Responds with an error of bad request", () => {
+    return request(app)
+      .get("/api/articles/person")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+
+  test("404: Responds with an error", () => {
+    return request(app)
+      .get("/api/articles/999")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No article Found");
+      });
+  });
+
+  test("404: Responds with an error", () => {
+    return request(app)
+      .get("/api/article")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Page Not Found");
+      });
+  });
+
+  test("404: Responds with an error of no topics found", () => {
+    db.query("DELETE FROM articles;");
+    return request(app)
+      .get("/api/articles/1")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No article Found");
       });
   });
 });
