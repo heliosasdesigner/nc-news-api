@@ -6,7 +6,7 @@ exports.getApi = (req, res, next) => {
       throw new Error("Endpoints not found");
     }
     res.status(200).send({ endpoints });
-  } catch (e) {
-    next(e);
+  } catch (err) {
+    next(err);
   }
 };
