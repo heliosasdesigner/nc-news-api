@@ -33,7 +33,6 @@ exports.updateArticleVotesById = (article_id, inc_votes) => {
       return rows[0];
     })
     .catch((err) => {
-      console.log(err);
       throw err;
     });
 };

@@ -12,6 +12,7 @@ const {
 const {
   getAllCommentsByArticleId,
   postCommentByArticleId,
+  deleteCommentById,
 } = require("./controllers/comments.controller");
 
 app.use(express.json());
@@ -20,12 +21,19 @@ app.get("/api", getApi);
 
 app.get("/api/topics", getAllTopics);
 
+// /api/articles
 app.get("/api/articles", getAllArticles);
+
 app.get("/api/articles/:article_id", getArticleById);
+
 app.patch("/api/articles/:article_id", patchArticleVotesById);
 
 app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
+
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+// /api/comments
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", notFound);
 
