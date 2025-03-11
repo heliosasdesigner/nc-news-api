@@ -25,7 +25,6 @@ exports.getArticleById = (req, res, next) => {
 exports.patchArticleVotesById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  console.log(article_id, inc_votes, "<<<< from controller");
   promises = [
     fetchArticleById(article_id),
     updateArticleVotesById(article_id, inc_votes),
