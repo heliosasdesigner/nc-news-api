@@ -56,7 +56,7 @@ describe("GET /api/topics", () => {
       });
   });
 
-  test("404: Responds with an error", () => {
+  test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
       .get("/api/topic")
       .expect(404)
@@ -97,7 +97,7 @@ describe("GET /api/articles", () => {
         expect(articles).toEqual([]);
       });
   });
-  test("404: Responds with an error", () => {
+  test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
       .get("/api/article")
       .expect(404)
@@ -127,7 +127,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test("400: Responds with an error of bad request", () => {
+  test("400: Passed invalid user ID and responds with an error of bad request", () => {
     return request(app)
       .get("/api/articles/person")
       .expect(400)
@@ -136,7 +136,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test("404: Responds with an error which id no exist", () => {
+  test("404: Passed not exists user ID and responds with an error", () => {
     return request(app)
       .get("/api/articles/999")
       .expect(404)
@@ -177,7 +177,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404: Responds with an error", () => {
+  test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
       .get("/api/articles/4/comment")
       .expect(404)
@@ -186,7 +186,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404: Responds with an error which article id no exist", () => {
+  test("404: Passed not exists user ID and responds with an error", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
@@ -207,8 +207,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("400: Responds with error of bad request", () => {
-    db.query("DELETE FROM comments;");
+  test("400: Passed invalid username and responds with error of bad request", () => {
     return request(app)
       .post("/api/articles/4/comments")
       .send({ username: 1234, body: 12345 })
@@ -218,7 +217,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("404: Responds with an error", () => {
+  test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
       .post("/api/articles/4/comment")
       .send({ username: "butter_bridge", body: "Testing" })
@@ -270,7 +269,7 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("400: Passed invalid value and Responds with an error of bad request ", () => {
+  test("400: Passed invalid value and responds with an error of bad request ", () => {
     return request(app)
       .patch("/api/articles/3")
       .send({ inc_votes: "ABCD" })
@@ -280,13 +279,46 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 
-  test("404: Responds with an error which id no exist", () => {
+  test("400: Passed invalid key and responds with an error of bad request ", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ ABC: 123 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+
+  test("404: Passed not exists article ID and responds with an error", () => {
     return request(app)
       .patch("/api/articles/9999")
       .send({ inc_votes: 1 })
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("No article Found");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Responds with no content", () => {
+    return request(app)
+      .delete("/api/comments/4")
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT * FROM comments WHERE comment_id = 4`);
+      })
+      .then(({ rows }) => {
+        expect(rows.length).toBe(0);
+      });
+  });
+
+  test("404: Passed not exists comment ID and responds with error of Comment Not Found", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment Not Found");
       });
   });
 });
