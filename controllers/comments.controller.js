@@ -4,7 +4,6 @@ const {
   insertCommentByArticleId,
   removeCommentById,
 } = require("../models/comments.model");
-const { getUsernameByUsername } = require("./authors.controller");
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
