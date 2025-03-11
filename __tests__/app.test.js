@@ -47,13 +47,14 @@ describe("GET /api/topics", () => {
   });
 
   test("200: Responds with an empty array with no topics found", () => {
-    db.query("DELETE FROM topics;");
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
-        expect(topics).toEqual([]);
-      });
+    return db.query("DELETE FROM topics;").then(() => {
+      return request(app)
+        .get("/api/topics")
+        .expect(200)
+        .then(({ body: { topics } }) => {
+          expect(topics).toEqual([]);
+        });
+    });
   });
 
   test("404: Passed incorrect endpoint and responds with an error", () => {
@@ -89,13 +90,14 @@ describe("GET /api/articles", () => {
   });
 
   test("200: Responds with an empty array", () => {
-    db.query("DELETE FROM articles;");
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toEqual([]);
-      });
+    return db.query("DELETE FROM articles;").then(() => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toEqual([]);
+        });
+    });
   });
   test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
@@ -168,13 +170,14 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 
   test("200: Responds with empty array of no comment found on existing article", () => {
-    db.query("DELETE FROM comments;");
-    return request(app)
-      .get("/api/articles/4/comments")
-      .expect(200)
-      .then(({ body: { comments } }) => {
-        expect(comments).toEqual([]);
-      });
+    return db.query("DELETE FROM comments;").then(() => {
+      return request(app)
+        .get("/api/articles/4/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toEqual([]);
+        });
+    });
   });
 
   test("404: Passed incorrect endpoint and responds with an error", () => {
@@ -319,6 +322,41 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Comment Not Found");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200: Responds with an object of all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+
+  test("200: Responds with an empty array with no users found", () => {
+    return db.query("DELETE FROM users;").then(() => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users).toEqual([]);
+        });
+    });
+  });
+
+  test("404: Passed incorrect endpoint and responds with an error", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Page Not Found");
       });
   });
 });
