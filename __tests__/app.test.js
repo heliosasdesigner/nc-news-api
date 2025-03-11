@@ -89,6 +89,26 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test("200: Responds with an object of all articles sorted by votes in desc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes&order=desc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  test("200: Responds with an object of all articles sorted by comment_count in desc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=desc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
   test("200: Responds with an empty array", () => {
     return db.query("DELETE FROM articles;").then(() => {
       return request(app)
@@ -99,6 +119,17 @@ describe("GET /api/articles", () => {
         });
     });
   });
+
+  test("200: Passed invalid queries and responds with an object of all articles sorted by default value : created_at in  asc order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=abcd&order=upward")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(5);
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
   test("404: Passed incorrect endpoint and responds with an error", () => {
     return request(app)
       .get("/api/article")
@@ -332,6 +363,7 @@ describe("GET /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body: { users } }) => {
+        expect(users.length).toBe(4);
         users.forEach((user) => {
           expect(typeof user.username).toBe("string");
           expect(typeof user.name).toBe("string");
