@@ -365,6 +365,71 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("202: Responds with an vote(+100) updated object of comment by id", () => {
+    return request(app)
+      .patch("/api/comments/3")
+      .send({ inc_votes: 100 })
+      .expect(202)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual({
+          comment_id: 3,
+          article_id: 12,
+          body: "I am 100% sure that we're not completely sure.",
+          votes: 100,
+          author: "butter_bridge",
+          created_at: "2020-11-24T00:08:00.000Z",
+        });
+      });
+  });
+
+  test("202: Responds with an vote(-1000) updated object of comment by id", () => {
+    return request(app)
+      .patch("/api/comments/3")
+      .send({ inc_votes: -1000 })
+      .expect(202)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual({
+          comment_id: 3,
+          article_id: 12,
+          body: "I am 100% sure that we're not completely sure.",
+          votes: -1000,
+          author: "butter_bridge",
+          created_at: "2020-11-24T00:08:00.000Z",
+        });
+      });
+  });
+
+  test("400: Passed invalid value in comment endpoint and responds with an error of bad request ", () => {
+    return request(app)
+      .patch("/api/comments/3")
+      .send({ inc_votes: "ABCD" })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+
+  test("400: Passed invalid key in the request body to update comment vote and responds with an error of bad request ", () => {
+    return request(app)
+      .patch("/api/comments/3")
+      .send({ ABC: 123 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+
+  test("404: Passed not exists article ID and responds with an error", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No article Found");
+      });
+  });
+});
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: Responds with no content", () => {
     return request(app)

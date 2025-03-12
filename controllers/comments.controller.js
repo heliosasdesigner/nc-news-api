@@ -3,6 +3,7 @@ const {
   fetchAllCommentsByArticleId,
   insertCommentByArticleId,
   removeCommentById,
+  updateCommentById,
 } = require("../models/comments.model");
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
@@ -28,6 +29,16 @@ exports.postCommentByArticleId = (req, res, next) => {
   Promise.all(promises)
     .then(([comment, _]) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => next(err));
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+  updateCommentById(comment_id, inc_votes)
+    .then((comment) => {
+      res.status(202).send({ comment });
     })
     .catch((err) => next(err));
 };
