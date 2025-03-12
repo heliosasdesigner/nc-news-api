@@ -30,6 +30,17 @@ exports.insertCommentByArticleId = (article_id, content) => {
     });
 };
 
+exports.updateCommentById = (comment_id, inc_votes) => {
+  queryString = `UPDATE comments SET votes = $1 WHERE comment_id = $2 RETURNING *`;
+  queryValue = [inc_votes, comment_id];
+  return db.query(queryString, queryValue).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Comment Not Found" });
+    }
+    return rows[0];
+  });
+};
+
 exports.removeCommentById = (comment_id) => {
   let queryString = `
     DELETE FROM comments WHERE comment_id = $1
