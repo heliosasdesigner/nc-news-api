@@ -1,15 +1,17 @@
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
-  return db
-    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
-    .then(({ rows }) => {
-      if (!rows.length) {
-        return Promise.reject({ status: 404, msg: "No article Found" });
-      }
-      return rows[0];
-    });
+  let queryString = `SELECT a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id)::INT as comment_count FROM articles AS a LEFT JOIN comments as c ON a.article_id = c.article_id WHERE a.article_id = $1 GROUP BY a.article_id`;
+  const queryValue = [article_id];
+  return db.query(queryString, queryValue).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "No article Found" });
+    }
+    return rows[0];
+  });
 };
+
+// a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id)::INT as comment_count
 
 exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
   let queryValue = [];
@@ -29,7 +31,18 @@ exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
     ? order.toUpperCase(order)
     : "ASC";
 
-  let queryString = `SELECT a.author, a.title, a.article_id,a.topic,a.created_at,a.votes,a.article_img_url,COUNT(c.comment_id)::INT as comment_count FROM articles AS a LEFT JOIN comments as c ON a.article_id = c.article_id `;
+  let queryString = `
+  SELECT
+  a.author,
+  a.title,
+  a.article_id,
+  a.topic,
+  a.created_at,
+  a.votes,
+  a.article_img_url,
+  COUNT(c.comment_id)::INT as comment_count
+  FROM articles AS a LEFT JOIN comments as c
+  ON a.article_id = c.article_id `;
 
   if (topic !== undefined && typeof topic === "string") {
     queryString += `WHERE a.topic = $1 `;
