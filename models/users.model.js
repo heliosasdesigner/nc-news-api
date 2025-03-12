@@ -1,11 +1,12 @@
 const db = require("../db/connection");
 
 exports.fetchUserByUsername = (username) => {
-  console.log(username);
   return db
     .query("SELECT * FROM users WHERE username = $1", [username])
     .then(({ rows }) => {
-      console.log(rows, "<<<< from authors ");
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "No User Found" });
+      }
       return rows[0];
     });
 };
