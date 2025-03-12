@@ -73,7 +73,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("created_at", { descending: false });
 
         articles.forEach((article) => {
@@ -94,7 +94,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=votes&order=desc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("votes", { descending: true });
       });
   });
@@ -104,8 +104,29 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=comment_count&order=desc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  test("200: Responds with an object of all articles which topic is cats", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(1);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+
+  test("200: Responds with an object of no articles which topic is some random string", () => {
+    return request(app)
+      .get("/api/articles?topic=random")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
       });
   });
 
@@ -125,7 +146,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=abcd&order=upward")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(5);
+        expect(articles.length).toBe(13);
         expect(articles).toBeSortedBy("created_at", { descending: false });
       });
   });

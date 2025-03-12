@@ -11,7 +11,9 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchAllArticles = (sort_by = "created_at", order = "ASC") => {
+exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
+  let queryValue = [];
+
   const orderOptions = [
     "created_at",
     "author",
@@ -27,14 +29,20 @@ exports.fetchAllArticles = (sort_by = "created_at", order = "ASC") => {
     ? order.toUpperCase(order)
     : "ASC";
 
-  let queryString = `SELECT a.author, a.title, a.article_id,a.topic,a.created_at,a.votes,a.article_img_url,count(c.comment_id)::INT as comment_count FROM articles AS a JOIN comments as c ON a.article_id = c.article_id GROUP BY a.author, a.title, a.article_id,a.topic,a.created_at,a.votes,a.article_img_url `;
+  let queryString = `SELECT a.author, a.title, a.article_id,a.topic,a.created_at,a.votes,a.article_img_url,COUNT(c.comment_id)::INT as comment_count FROM articles AS a LEFT JOIN comments as c ON a.article_id = c.article_id `;
+
+  if (topic !== undefined && typeof topic === "string") {
+    queryString += `WHERE a.topic = $1 `;
+    queryValue.push(topic.toLowerCase());
+  }
+  queryString += `GROUP BY a.article_id `;
 
   if (sortedBy === "comment_count") {
     queryString += `ORDER BY ${sortedBy} ${direction}`;
   } else {
     queryString += `ORDER BY a.${sortedBy} ${direction}`;
   }
-  return db.query(queryString).then(({ rows }) => {
+  return db.query(queryString, queryValue).then(({ rows }) => {
     return rows;
   });
 };
