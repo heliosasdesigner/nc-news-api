@@ -1,43 +1,26 @@
 const express = require("express");
 const app = express();
+
+const articlesRouter = require("./router/articles.router");
 const { getApi } = require("./controllers/api.controller");
-const { getAllTopics } = require("./controllers/topics.controller");
 const { notFound } = require("./controllers/notfound.controller");
 const { psqlError, generalError } = require("./controllers/errors.controller");
-const {
-  getArticleById,
-  getAllArticles,
-  patchArticleVotesById,
-} = require("./controllers/articles.controller");
-const {
-  getAllCommentsByArticleId,
-  postCommentByArticleId,
-  deleteCommentById,
-} = require("./controllers/comments.controller");
-const { getAllUsers } = require("./controllers/users.controller");
+
+const commentsRouter = require("./router/comments.router");
+const topicsRouter = require("./router/topics.router");
+const usersRouter = require("./router/users.router");
 
 app.use(express.json());
 
 app.get("/api", getApi);
 
-app.get("/api/topics", getAllTopics);
+app.use("/api/topics", topicsRouter);
 
-// /api/articles
-app.get("/api/articles", getAllArticles);
+app.use("/api/articles", articlesRouter);
 
-app.get("/api/articles/:article_id", getArticleById);
+app.use("/api/comments", commentsRouter);
 
-app.patch("/api/articles/:article_id", patchArticleVotesById);
-
-app.get("/api/articles/:article_id/comments", getAllCommentsByArticleId);
-
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-
-// /api/comments
-app.delete("/api/comments/:comment_id", deleteCommentById);
-
-// /api/users
-app.get("/api/users", getAllUsers);
+app.use("/api/users", usersRouter);
 
 app.all("*", notFound);
 

@@ -121,6 +121,15 @@ describe("GET /api/articles", () => {
       });
   });
 
+  test("200: Responds with an object of no articles which topic is no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(0);
+      });
+  });
+
   test("200: Responds with an object of no articles which topic is some random string", () => {
     return request(app)
       .get("/api/articles?topic=random")
