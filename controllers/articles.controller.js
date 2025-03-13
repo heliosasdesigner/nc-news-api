@@ -21,7 +21,7 @@ exports.postArticle = (req, res, next) => {
   promises = [insertArticle(content)];
   Promise.all(promises)
     .then(([article]) => {
-      const { article_id, votes, created_at, comment_count } = article;
+      const { article_id, votes, created_at } = article;
       res
         .status(201)
         .send({ article: { article_id, votes, created_at, comment_count: 0 } });

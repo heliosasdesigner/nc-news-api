@@ -1,11 +1,17 @@
 const db = require("../db/connection");
 
-exports.fetchAllCommentsByArticleId = (article_id) => {
-  let queryString = `SELECT * FROM comments WHERE article_id = $1 `;
+exports.fetchAllCommentsByArticleId = (article_id, limit = 5, p = 1) => {
+  let queryString = `SELECT comment_id, article_id, author, body, votes, created_at, COUNT(*) OVER()::INT AS total_count FROM comments WHERE article_id = $1 `;
   const queryValue = [article_id];
   const orderOptions = ["created_at"];
   let order = orderOptions[0];
-  queryString += `ORDER BY ${order} DESC`;
+  queryString += `ORDER BY ${order} DESC `;
+
+  limit = parseInt(limit);
+  p = parseInt(p);
+  let offset = (p - 1) * limit;
+  queryValue.push(limit, offset);
+  queryString += `LIMIT $${queryValue.length - 1} OFFSET $${queryValue.length}`;
 
   return db.query(queryString, queryValue).then(({ rows }) => {
     return rows;
