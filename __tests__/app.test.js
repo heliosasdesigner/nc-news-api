@@ -67,6 +67,34 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("POST /api/topics/", () => {
+  test("201: Responds with the posted topic of new topic", () => {
+    return request(app)
+      .post("/api/topics/")
+      .send({
+        slug: "games",
+        description: "the games should play once",
+      })
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic.slug).toBe("games");
+      });
+  });
+
+  test("400: Passed invalid body to update and respond with error of bad request", () => {
+    return request(app)
+      .post("/api/topics/")
+      .send({
+        abe: "games",
+        edf: "the games should play once",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+});
+
 describe("GET /api/articles", () => {
   test("200: Responds with an object of all articles sorted by created_at", () => {
     return request(app)
@@ -260,18 +288,27 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/4/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(11);
+        expect(comments.length).toBe(5);
         expect(comments).toBeSortedBy("created_at", { descending: true });
 
         comments.forEach((comment) => {
           expect(typeof comment.comment_id).toBe("number");
           expect(typeof comment.votes).toBe("number");
-
+          expect(comment.total_count).toBe(11);
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
           expect(typeof comment.article_id).toBe("number");
         });
+      });
+  });
+
+  test("200: Responds with comment of number limit by (6) found on existing article", () => {
+    return request(app)
+      .get("/api/articles/4/comments?limit=6&p2")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(6);
       });
   });
 

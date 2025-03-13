@@ -12,7 +12,6 @@ const {
 
 articlesRouter.get("/", getAllArticles);
 
-// TODO : add the post topic endpoint first, then create the articles before we check the topic, if not exists, create topic
 articlesRouter.post("/", postArticle);
 
 articlesRouter.get("/:article_id", getArticleById);
