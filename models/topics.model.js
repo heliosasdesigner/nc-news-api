@@ -6,6 +6,14 @@ exports.fetchAllTopics = () => {
   });
 };
 
+exports.fetchTopicBySlug = (slug) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [slug])
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.insertTopic = (content) => {
   const { slug, description } = content;
   const img_url = "";

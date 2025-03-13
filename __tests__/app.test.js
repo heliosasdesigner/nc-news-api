@@ -231,6 +231,26 @@ describe("POST /api/articles/", () => {
       });
   });
 
+  test("201: Responds with the posted article of new article in the case the topic no exists", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({
+        title: "This is new article for testing",
+        topic: "dogs",
+        author: "paul",
+        body: "this is body for testing with topic is dog",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(14);
+
+        expect(typeof article.created_at).toBe("string");
+        expect(article.votes).toBe(0);
+      });
+  });
+
   test("400: Passed invalid body to update and respond with error of bad request", () => {
     return request(app)
       .post("/api/articles/")
@@ -278,6 +298,29 @@ describe("GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("No article Found");
+      });
+  });
+});
+
+describe("DELETE /api/articles/:article_id", () => {
+  test("204: Responds with no content", () => {
+    return request(app)
+      .delete("/api/articles/4")
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT * FROM articles WHERE article_id = 4`);
+      })
+      .then(({ rows }) => {
+        expect(rows.length).toBe(0);
+      });
+  });
+
+  test("404: Passed not exists comment ID and responds with error of Comment Not Found", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment Not Found");
       });
   });
 });
