@@ -11,9 +11,7 @@ exports.fetchArticleById = (article_id) => {
   });
 };
 
-exports.insertArticle = (content) => {
-  const { title, topic, author, body, article_img_url } = content;
-
+exports.insertArticle = (title, topic, author, body, article_img_url) => {
   let createDate = new Date();
   let queryString = `
     INSERT INTO articles (title, topic, author, body, created_at,votes,article_img_url)
@@ -21,7 +19,6 @@ exports.insertArticle = (content) => {
     RETURNING *;`;
 
   const queryValue = [title, topic, author, body, createDate, article_img_url];
-
   return db
     .query(queryString, queryValue)
     .then(({ rows }) => {
@@ -104,4 +101,19 @@ exports.updateArticleVotesById = (article_id, inc_votes) => {
     .catch((err) => {
       throw err;
     });
+};
+
+exports.removeArticleById = (article_id) => {
+  let queryString = `
+    DELETE FROM articles WHERE article_id = $1
+    RETURNING *;`;
+  const queryValue = [article_id];
+
+  return db.query(queryString, queryValue).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Article Not Found" });
+    }
+
+    return rows[0];
+  });
 };

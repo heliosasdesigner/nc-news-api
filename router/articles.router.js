@@ -4,6 +4,7 @@ const {
   getAllArticles,
   postArticle,
   patchArticleVotesById,
+  deleteArticleById,
 } = require("../controllers/articles.controller");
 const {
   getAllCommentsByArticleId,
@@ -15,6 +16,8 @@ articlesRouter.get("/", getAllArticles);
 articlesRouter.post("/", postArticle);
 
 articlesRouter.get("/:article_id", getArticleById);
+
+articlesRouter.delete("/:article_id", deleteArticleById);
 
 articlesRouter.patch("/:article_id", patchArticleVotesById);
 
