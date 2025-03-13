@@ -73,7 +73,8 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
+
         expect(articles).toBeSortedBy("created_at", { descending: false });
 
         articles.forEach((article) => {
@@ -84,7 +85,9 @@ describe("GET /api/articles", () => {
           expect(typeof article.created_at).toBe("string");
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.total_count).toBe("number");
           expect(typeof article.comment_count).toBe("number");
+          expect(article.total_count).toBe(13);
         });
       });
   });
@@ -94,7 +97,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=votes&order=desc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("votes", { descending: true });
       });
   });
@@ -104,7 +107,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles?sort_by=comment_count&order=desc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("votes", { descending: true });
       });
   });
@@ -150,13 +153,22 @@ describe("GET /api/articles", () => {
     });
   });
 
-  test("200: Passed invalid queries and responds with an object of all articles sorted by default value : created_at in  asc order", () => {
+  test("200: Passed invalid queries and responds with an object of all articles sorted by default value : created_at in asc order", () => {
     return request(app)
       .get("/api/articles?sort_by=abcd&order=upward")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13);
+        expect(articles.length).toBe(10);
         expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  test("200: Responds with an object of limit(10) number articles in p(1) page", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=1")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(10);
       });
   });
 

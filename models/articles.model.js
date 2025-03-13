@@ -32,7 +32,13 @@ exports.insertArticle = (content) => {
     });
 };
 
-exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
+exports.fetchAllArticles = (
+  topic,
+  sort_by = "created_at",
+  order = "ASC",
+  limit = 10,
+  p = 1
+) => {
   let queryValue = [];
 
   const orderOptions = [
@@ -59,6 +65,7 @@ exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
   a.created_at,
   a.votes,
   a.article_img_url,
+  COUNT(*) OVER()::INT AS total_count, 
   COUNT(c.comment_id)::INT as comment_count
   FROM articles AS a LEFT JOIN comments as c
   ON a.article_id = c.article_id `;
@@ -70,10 +77,17 @@ exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
   queryString += `GROUP BY a.article_id `;
 
   if (sortedBy === "comment_count") {
-    queryString += `ORDER BY ${sortedBy} ${direction}`;
+    queryString += `ORDER BY ${sortedBy} ${direction} `;
   } else {
-    queryString += `ORDER BY a.${sortedBy} ${direction}`;
+    queryString += `ORDER BY a.${sortedBy} ${direction} `;
   }
+
+  limit = parseInt(limit);
+  p = parseInt(p);
+  let offset = (p - 1) * limit;
+  queryValue.push(limit, offset);
+  queryString += `LIMIT $${queryValue.length - 1} OFFSET $${queryValue.length}`;
+
   return db.query(queryString, queryValue).then(({ rows }) => {
     return rows;
   });
