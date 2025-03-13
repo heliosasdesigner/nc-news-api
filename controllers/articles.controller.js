@@ -1,8 +1,10 @@
 const {
+  insertArticle,
   fetchArticleById,
   fetchAllArticles,
   updateArticleVotesById,
 } = require("../models/articles.model");
+const { fetchUserByUsername } = require("../models/users.model");
 
 exports.getAllArticles = (req, res, next) => {
   const { topic, sort_by, order } = req.query;
@@ -10,6 +12,20 @@ exports.getAllArticles = (req, res, next) => {
   fetchAllArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch((err) => next(err));
+};
+
+exports.postArticle = (req, res, next) => {
+  const content = req.body;
+
+  promises = [insertArticle(content)];
+  Promise.all(promises)
+    .then(([article]) => {
+      const { article_id, votes, created_at, comment_count } = article;
+      res
+        .status(201)
+        .send({ article: { article_id, votes, created_at, comment_count: 0 } });
     })
     .catch((err) => next(err));
 };

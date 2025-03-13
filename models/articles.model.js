@@ -11,7 +11,26 @@ exports.fetchArticleById = (article_id) => {
   });
 };
 
-// a.article_id, a.title, a.topic, a.author, a.body, a.created_at, a.votes, a.article_img_url, COUNT(c.comment_id)::INT as comment_count
+exports.insertArticle = (content) => {
+  const { title, topic, author, body, article_img_url } = content;
+
+  let createDate = new Date();
+  let queryString = `
+    INSERT INTO articles (title, topic, author, body, created_at,votes,article_img_url)
+    VALUES ($1, $2, (SELECT username FROM users WHERE name = $3), $4, $5, 0, $6 )
+    RETURNING *;`;
+
+  const queryValue = [title, topic, author, body, createDate, article_img_url];
+
+  return db
+    .query(queryString, queryValue)
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
 
 exports.fetchAllArticles = (topic, sort_by = "created_at", order = "ASC") => {
   let queryValue = [];

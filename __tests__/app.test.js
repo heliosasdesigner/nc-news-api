@@ -170,6 +170,38 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("POST /api/articles/", () => {
+  test("201: Responds with the posted article of new article in the case the topic exists", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({
+        title: "This is new article for testing",
+        topic: "cats",
+        author: "paul",
+        body: "this is body for testing",
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(14);
+
+        expect(typeof article.created_at).toBe("string");
+        expect(article.votes).toBe(0);
+      });
+  });
+
+  test("400: Passed invalid body to update and respond with error of bad request", () => {
+    return request(app)
+      .post("/api/articles/")
+      .send({ abc: 1234, def: 12345 })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Database request failed");
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an object of article by id", () => {
     return request(app)
@@ -430,6 +462,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("204: Responds with no content", () => {
     return request(app)
