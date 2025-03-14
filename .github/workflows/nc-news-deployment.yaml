@@ -71,7 +71,7 @@ jobs:
           PGUSER=test_user \
           PGPASSWORD=test_password \
           PGHOST=localhost \
-          npm run seed-dev
+          npm run test-seed
 
       - name: Run tests
         run: |
