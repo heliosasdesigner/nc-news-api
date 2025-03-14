@@ -8,7 +8,6 @@ const {
   createCommentsTable,
 } = require("../seeds/seeding-func");
 const seed = ({ topicData, userData, articleData, commentData }) => {
-  console.log("Planting the seed");
   return db
 
     .query("DROP TABLE IF EXISTS comments;")
