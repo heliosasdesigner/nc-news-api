@@ -65,7 +65,7 @@ jobs:
             fi
           done
 
-      - name: Seed DB
+      - name: Test Seed DB
         run: |
           PGDATABASE=my_db \
           PGUSER=test_user \
@@ -73,13 +73,13 @@ jobs:
           PGHOST=localhost \
           npm run test-seed
 
-      - name: Run tests
+      - name: Test App
         run: |
           PGDATABASE=my_db \
           PGUSER=test_user \
           PGPASSWORD=test_password \
           PGHOST=localhost \
-          npm test
+          npm run test-app
 
   deploy:
     runs-on: ubuntu-latest
