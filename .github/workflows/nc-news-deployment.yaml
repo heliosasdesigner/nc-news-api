@@ -7,19 +7,46 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: my_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
       - name: Use Node.js
-        uses: actions/setup-node@v2
-
-      - name: Use PostgreSQL
-        uses: harmon758/postgresql-action@v1
+        uses: actions/setup-node@v3
         with:
-          postgresql_db: "my_db"
-          postgresql_user: "test_user"
-          postgresql_password: "test_password"
+          node-version: 16
+
+      - name: Install PostgreSQL client (optional)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          counter=0
+          max_attempts=60
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for Postgres... attempt $((counter+1))"
+            sleep 2
+            counter=$((counter+1))
+            if [ $counter -ge $max_attempts ]; then
+              echo "Postgres did not become ready in time!"
+              exit 1
+            fi
+          done
 
       - name: Install dependencies
         run: npm ci
