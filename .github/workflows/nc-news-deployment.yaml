@@ -65,14 +65,6 @@ jobs:
             fi
           done
 
-      - name: Setup DB
-        run: |
-          PGDATABASE=postgres \
-          PGUSER=test_user \
-          PGPASSWORD=test_password \
-          PGHOST=localhost \
-          psql -c "CREATE DATABASE my_db;"
-
       - name: Seed DB
         run: |
           PGDATABASE=my_db \
