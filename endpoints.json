@@ -9,6 +9,16 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics/": {
+    "description": "creates a new topic and returns the created topic",
+    "exampleRequest": {
+      "slug": "games",
+      "description": "the games should play once"
+    },
+    "exampleResponse": {
+      "topic": { "slug": "games", "description": "the games should play once" }
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -26,6 +36,28 @@
       ]
     }
   },
+  "POST /api/articles/": {
+    "description": "creates a new article and returns the created article",
+    "exampleRequest": {
+      "title": "This is new article for testing",
+      "topic": "cats",
+      "author": "paul",
+      "body": "this is body for testing",
+      "article_img_url": "https://example.com/image.jpg"
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 14,
+        "title": "This is new article for testing",
+        "topic": "cats",
+        "author": "paul",
+        "body": "this is body for testing",
+        "created_at": "2025-03-14T10:00:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://example.com/image.jpg"
+      }
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "serves a object of all article by article_id",
     "queries": [],
@@ -41,6 +73,28 @@
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 2
         }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the given article by article_id",
+    "status": 204
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the votes property of an article by article_id, returns the updated article",
+    "exampleRequest": {
+      "inc_votes": 100
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 3,
+        "title": "They're not exactly dogs, are they?",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "Well? Think about it.",
+        "created_at": "2020-06-06T09:10:00.000Z",
+        "votes": 100,
+        "article_img_url": "https://example.com/image.jpg"
+      }
+    }
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments for the given article_id, sorted by created_at in descending order",
@@ -68,24 +122,23 @@
       "comment": "I love streaming noses"
     }
   },
-  "PATCH /api/articles/:article_id": {
-    "description": "updates the votes property of an article by article_id, returns the updated article",
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes property of a comment by comment_id, returns the updated comment",
     "exampleRequest": {
       "inc_votes": 100
     },
     "exampleResponse": {
-      "article": {
-        "article_id": 3,
-        "title": "They're not exactly dogs, are they?",
-        "topic": "mitch",
-        "author": "butter_bridge",
-        "body": "Well? Think about it.",
-        "created_at": "2020-06-06T09:10:00.000Z",
+      "comment": {
+        "comment_id": 3,
+        "article_id": 12,
+        "body": "I am 100% sure that we're not completely sure.",
         "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "author": "butter_bridge",
+        "created_at": "2020-11-24T00:08:00.000Z"
       }
     }
   },
+  
   "DELETE /api/comments/:comment_id": {
     "description": "deletes the given comment by comment_id",
     "exampleRequest": {},
@@ -104,6 +157,17 @@
           
         }
       ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of the user by username",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://example.com/avatar.jpg"
+      }
     }
   }
 }
