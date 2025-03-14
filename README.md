@@ -1,6 +1,19 @@
 # News Structure Portfolio
 
-This project is a news structure portfolio built using JavaScript. It connects to a PostgreSQL database using `pg` and utilizes raw SQL queries to create and insert data into tables.
+This project is a backend API for a news platform, providing RESTful endpoints to interact with a PostgreSQL database. It allows users to fetch topics, articles, users, and comments, as well as post, update, and delete comments and articles.
+
+## Hosted Version
+
+You can access the hosted API here: [NC News API](https://nc-news-soqt.onrender.com/)
+
+## Features
+
+- Fetch a list of articles, topics, users, and comments
+- Query articles by author, topic, sort order, and pagination
+- Post new articles and comments
+- Update votes for articles and comments
+- Delete comments and articles
+
 
 ## Table of Contents
 
