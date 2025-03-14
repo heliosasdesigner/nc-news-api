@@ -10,8 +10,16 @@ const {
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
     .query("DROP TABLE IF EXISTS comments;")
+    .catch((err) => {
+      console.error("Error dropping comments:", err);
+      throw err;
+    })
     .then(() => {
       return db.query("DROP TABLE IF EXISTS articles;");
+    })
+    .catch((err) => {
+      console.error("Error dropping articles:", err);
+      throw err;
     })
     .then(() => {
       return db.query("DROP TABLE IF EXISTS users;");
