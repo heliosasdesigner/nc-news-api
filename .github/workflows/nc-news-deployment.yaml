@@ -29,7 +29,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Install PostgreSQL client (optional)
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
@@ -65,8 +65,29 @@ jobs:
             fi
           done
 
+      - name: Setup DB
+        run: |
+          PGDATABASE=postgres \
+          PGUSER=test_user \
+          PGPASSWORD=test_password \
+          PGHOST=localhost \
+          psql -c "CREATE DATABASE my_db;"
+
+      - name: Seed DB
+        run: |
+          PGDATABASE=my_db \
+          PGUSER=test_user \
+          PGPASSWORD=test_password \
+          PGHOST=localhost \
+          npm run seed-dev
+
       - name: Run tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password PGHOST=localhost npm test
+        run: |
+          PGDATABASE=my_db \
+          PGUSER=test_user \
+          PGPASSWORD=test_password \
+          PGHOST=localhost \
+          npm test
 
   deploy:
     runs-on: ubuntu-latest
