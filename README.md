@@ -22,7 +22,6 @@ You can access the hosted API here: [NC News API](https://nc-news-soqt.onrender.
 - [Database Setup](#database-setup)
 - [Running the Project](#running-the-project)
 - [Testing](#testing)
-- [License](#license)
 
 ## Installation
 
@@ -112,6 +111,3 @@ npm run test-seed
 ```
 Jest is configured with jest-extended for additional matchers. The Jest configuration can be found in the package.json under the jest section.
 
-##  License
-
-This project is licensed under the license that I don't know
