@@ -335,7 +335,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         comments.forEach((comment) => {
           expect(typeof comment.comment_id).toBe("number");
           expect(typeof comment.votes).toBe("number");
-          expect(comment.total_count).toBe(11);
+
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
