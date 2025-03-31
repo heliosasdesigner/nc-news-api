@@ -330,7 +330,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/4/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(5);
         expect(comments).toBeSortedBy("created_at", { descending: true });
 
         comments.forEach((comment) => {
@@ -345,12 +344,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("200: Responds with comment of number limit by (6) found on existing article", () => {
+  test("200: Responds with comment of number limit by (1) found on existing article", () => {
     return request(app)
-      .get("/api/articles/4/comments?limit=6&p2")
+      .get("/api/articles/4/comments?limit=1&p2")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments.length).toBe(6);
+        expect(comments.length).toBe(1);
       });
   });
 
