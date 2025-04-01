@@ -84,7 +84,6 @@ exports.fetchAllArticles = (
   let offset = (p - 1) * limit;
   queryValue.push(limit, offset);
   queryString += `LIMIT $${queryValue.length - 1} OFFSET $${queryValue.length}`;
-
   return db.query(queryString, queryValue).then(({ rows }) => {
     return rows;
   });

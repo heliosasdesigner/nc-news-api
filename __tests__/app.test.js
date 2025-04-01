@@ -191,12 +191,30 @@ describe("GET /api/articles", () => {
       });
   });
 
-  test("200: Responds with an object of limit(10) number articles in p(1) page", () => {
+  test("200: Responds with an object of limit(3) number articles in p(1) page", () => {
     return request(app)
-      .get("/api/articles?limit=10&p=1")
+      .get("/api/articles?limit=3&p=1")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(10);
+        expect(articles.length).toBe(3);
+      });
+  });
+
+  test("200: Responds with an object of limit(3) number articles in p(2) page", () => {
+    return request(app)
+      .get("/api/articles?limit=3&p=2")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(3);
+      });
+  });
+
+  test("200: Responds with an object of limit(3) number articles in p(3) page", () => {
+    return request(app)
+      .get("/api/articles?limit=3&p=3")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(3);
       });
   });
 
