@@ -49,8 +49,8 @@ exports.fetchAllArticles = (
   let sortedBy = orderOptions.includes(sort_by) ? sort_by : "created_at";
 
   const orderDirectionOption = ["ASC", "DESC"];
-  let direction = orderDirectionOption.includes(order.toUpperCase(order))
-    ? order.toUpperCase(order)
+  let direction = orderDirectionOption.includes(order.toUpperCase())
+    ? order.toUpperCase()
     : "ASC";
 
   let queryString = `
@@ -74,7 +74,7 @@ exports.fetchAllArticles = (
   queryString += `GROUP BY a.article_id `;
 
   if (sortedBy === "comment_count") {
-    queryString += `ORDER BY ${sortedBy} ${direction} `;
+    queryString += `ORDER BY ${sortedBy} ${direction}, a.article_id ${direction} `;
   } else {
     queryString += `ORDER BY a.${sortedBy} ${direction} `;
   }
