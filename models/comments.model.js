@@ -29,7 +29,7 @@ exports.insertCommentByArticleId = (article_id, content) => {
   return db
     .query(queryString, queryValue)
     .then(({ rows }) => {
-      return rows[0].body;
+      return rows[0];
     })
     .catch((err) => {
       throw err;

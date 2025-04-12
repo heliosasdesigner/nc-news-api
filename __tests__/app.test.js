@@ -408,7 +408,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send({ username: "butter_bridge", body: "I love streaming noses" })
       .expect(201)
       .then(({ body: { comment } }) => {
-        expect(comment).toBe("I love streaming noses");
+        expect(comment.body).toBe("I love streaming noses");
       });
   });
 
